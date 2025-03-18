@@ -5,7 +5,7 @@ import bcrypt from "bcrypt";
 
 export async function POST(req: Request) {
   await dbConnection();
-
+		console.log("how")
   try {
     const { username, email, password } = await req.json();
     let verifyCode = Math.floor(100000 + Math.random() * 900000).toString(); // ✅ Declare verifyCode outside the if-block

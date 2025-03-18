@@ -1,25 +1,30 @@
-import mongoose from "mongoose"
+import mongoose from "mongoose";
 
-type ConnectionObject = {
-    isConnected ?:number
+const MONGODB_URI = process.env.MONGODB_URI as string;
+
+if (!MONGODB_URI) {
+  throw new Error("Please define the MONGODB_URI environment variable.");
 }
 
-const connection:ConnectionObject = {}
-
-async function dbConnection():Promise<void> {
-    if(connection.isConnected){
-        console.log("Using existing connection")
-        return
-    }
-    try {
-       const db = await mongoose.connect(process.env.MONGO_URI || "" ,{})
-      connection.isConnected =  db.connections[0].readyState
-      console.log('====================================');
-      console.log("    Connected to database");
-      console.log('===================================='); 
-    } catch (error) {
-        console.error("Error while connecting to database",error)
-        process.exit(1)
-    }
+interface MongooseCache {
+  conn: mongoose.Connection | null;
+  promise: Promise<mongoose.Connection> | null;
 }
-export default dbConnection
+
+let globalCache = global as unknown as { mongoose?: MongooseCache };
+if (!globalCache.mongoose) {
+  globalCache.mongoose = { conn: null, promise: null };
+}
+
+export async function dbConnection(): Promise<mongoose.Connection> {
+  if (globalCache.mongoose!.conn) return globalCache.mongoose!.conn;
+
+  if (!globalCache.mongoose!.promise) {
+    globalCache.mongoose!.promise = mongoose.connect(MONGODB_URI, {}).then((mongoose) => mongoose.connection);
+  }
+
+  globalCache.mongoose!.conn = await globalCache.mongoose!.promise;
+  return globalCache.mongoose!.conn;
+}
+
+export default dbConnection;
