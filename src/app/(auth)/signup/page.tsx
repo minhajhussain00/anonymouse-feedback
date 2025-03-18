@@ -53,6 +53,7 @@ const SignupPage = () => {
           typeof axiosError.response?.data.Message === "string"
             ? axiosError.response.data.Message
             : "Error checking username";
+        toast.error("Error",{description:errorMessage})
         setUsernameMessage(errorMessage);
       } finally {
         setIsCheckingUsername(false);
