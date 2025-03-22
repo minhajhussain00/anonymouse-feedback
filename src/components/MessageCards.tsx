@@ -16,7 +16,7 @@ import {
 import { Button } from './ui/button';
 import axios from 'axios';
 import { toast } from 'sonner';
-
+import dayjs from 'dayjs'
 type MessageCardProps = {
     message: Message;
     onMessageDelete: (messageId: string) => void;
@@ -26,7 +26,7 @@ const MessageCards = ({message,onMessageDelete}:MessageCardProps) => {
         const response = await axios.delete(
             `/api/delete-message/${message._id}`
           );
-          //TODO : MAKE THE DELETE API
+         
           toast.success(
             response.data.message,
           );
@@ -63,7 +63,9 @@ const MessageCards = ({message,onMessageDelete}:MessageCardProps) => {
                 </AlertDialogContent>
               </AlertDialog>
             </div>
-            
+            <div className="text-sm">
+          {dayjs(message.createdAt).format('MMM D, YYYY h:mm A')}
+        </div>
             
           </CardHeader>
           <CardContent></CardContent>
