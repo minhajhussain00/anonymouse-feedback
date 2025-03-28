@@ -9,9 +9,9 @@ export async function POST(req: Request) {
   try {
     const { username, email, password } = await req.json();
     let verifyCode = Math.floor(100000 + Math.random() * 900000).toString(); // ✅ Declare verifyCode outside the if-block
-
-    const existingUser = await User.findOne({ $or: [{ username }, { email }] });
-
+console.log("how")
+    const existingUser = await User.findOne({ username });
+console.log("how")
     if (existingUser) {
       if (existingUser.isVerified) {
         const message =
