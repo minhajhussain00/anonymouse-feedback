@@ -5,6 +5,7 @@ export async function POST(req: Request) {
     await dbConnection();
     const { username, content } = await req.json();
 
+
     try {
         const user = await User.findOne({ username });
         if (!user) {
@@ -13,8 +14,9 @@ export async function POST(req: Request) {
                 { status: 401 }
             );
         }
-
-        if (!user.isAcceptingMessage) { 
+console.log(user.isAcceptingMessege)
+console.log(user)
+        if (!user.isAcceptingMessege) { 
             return new Response(
                 JSON.stringify({ success: false, message: "User not accepting messages" }),
                 { status: 401 }
